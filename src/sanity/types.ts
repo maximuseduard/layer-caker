@@ -68,6 +68,18 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type Redirect = {
+  _id: string;
+  _type: "redirect";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  source?: string;
+  destination?: string;
+  permanent?: boolean;
+  isEnabled?: boolean;
+};
+
 export type SiteSettings = {
   _id: string;
   _type: "siteSettings";
@@ -242,6 +254,8 @@ export type Page = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  seo?: Seo;
+  social?: Social;
 };
 
 export type Post = {
@@ -317,6 +331,33 @@ export type Post = {
     _key: string;
     [internalGroqTypeReferenceTo]?: "post";
   }>;
+  seo?: Seo;
+  social?: Social;
+};
+
+export type Social = {
+  _type: "social";
+  linkedIn?: string;
+  x?: string;
+};
+
+export type Seo = {
+  _type: "seo";
+  title?: string;
+  description?: string;
+  image?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+  noIndex?: boolean;
 };
 
 export type Author = {
@@ -465,7 +506,128 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | SiteSettings | SplitImage | Hero | Features | Faqs | Faq | PageBuilder | Page | Post | Author | Category | Slug | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
+export type SanityAssistInstructionTask = {
+  _type: "sanity.assist.instructionTask";
+  path?: string;
+  instructionKey?: string;
+  started?: string;
+  updated?: string;
+  info?: string;
+};
+
+export type SanityAssistTaskStatus = {
+  _type: "sanity.assist.task.status";
+  tasks?: Array<{
+    _key: string;
+  } & SanityAssistInstructionTask>;
+};
+
+export type SanityAssistSchemaTypeAnnotations = {
+  _type: "sanity.assist.schemaType.annotations";
+  title?: string;
+  fields?: Array<{
+    _key: string;
+  } & SanityAssistSchemaTypeField>;
+};
+
+export type SanityAssistOutputType = {
+  _type: "sanity.assist.output.type";
+  type?: string;
+};
+
+export type SanityAssistOutputField = {
+  _type: "sanity.assist.output.field";
+  path?: string;
+};
+
+export type SanityAssistInstructionContext = {
+  _type: "sanity.assist.instruction.context";
+  reference?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "assist.instruction.context";
+  };
+};
+
+export type AssistInstructionContext = {
+  _id: string;
+  _type: "assist.instruction.context";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  context?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+};
+
+export type SanityAssistInstructionUserInput = {
+  _type: "sanity.assist.instruction.userInput";
+  message?: string;
+  description?: string;
+};
+
+export type SanityAssistInstructionPrompt = Array<{
+  children?: Array<{
+    marks?: Array<string>;
+    text?: string;
+    _type: "span";
+    _key: string;
+  } | {
+    _key: string;
+  } & SanityAssistInstructionFieldRef | {
+    _key: string;
+  } & SanityAssistInstructionContext | {
+    _key: string;
+  } & SanityAssistInstructionUserInput>;
+  style?: "normal";
+  listItem?: never;
+  markDefs?: null;
+  level?: number;
+  _type: "block";
+  _key: string;
+}>;
+
+export type SanityAssistInstructionFieldRef = {
+  _type: "sanity.assist.instruction.fieldRef";
+  path?: string;
+};
+
+export type SanityAssistInstruction = {
+  _type: "sanity.assist.instruction";
+  prompt?: SanityAssistInstructionPrompt;
+  icon?: string;
+  title?: string;
+  userId?: string;
+  createdById?: string;
+  output?: Array<{
+    _key: string;
+  } & SanityAssistOutputField | {
+    _key: string;
+  } & SanityAssistOutputType>;
+};
+
+export type SanityAssistSchemaTypeField = {
+  _type: "sanity.assist.schemaType.field";
+  path?: string;
+  instructions?: Array<{
+    _key: string;
+  } & SanityAssistInstruction>;
+};
+
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Redirect | SiteSettings | SplitImage | Hero | Features | Faqs | Faq | PageBuilder | Page | Post | Social | Seo | Author | Category | Slug | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | SanityAssistInstructionTask | SanityAssistTaskStatus | SanityAssistSchemaTypeAnnotations | SanityAssistOutputType | SanityAssistOutputField | SanityAssistInstructionContext | AssistInstructionContext | SanityAssistInstructionUserInput | SanityAssistInstructionPrompt | SanityAssistInstructionFieldRef | SanityAssistInstruction | SanityAssistSchemaTypeField;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: POSTS_QUERY
@@ -546,7 +708,7 @@ export type POSTS_SLUGS_QUERYResult = Array<{
   slug: string | null;
 }>;
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0]{  _id,  title,  body,  mainImage,  publishedAt,  "categories": coalesce(    categories[]->{      _id,      slug,      title    },    []  ),  author->{    name,    image  },  relatedPosts[]{    _key, // required for drag and drop    ...@->{_id, title, slug} // get fields from the referenced post  }}
+// Query: *[_type == "post" && slug.current == $slug][0]{  _id,  title,  body,  mainImage,  publishedAt,  "categories": coalesce(    categories[]->{      _id,      slug,      title    },    []  ),  author->{    name,    image  },  relatedPosts[]{    _key, // required for drag and drop    ...@->{_id, title, slug} // get fields from the referenced post  },  "seo": {    "title": coalesce(seo.title, title, ""),    "description": coalesce(seo.description,  ""),    "image": seo.image,    "noIndex": seo.noIndex == true  },}
 export type POST_QUERYResult = {
   _id: string;
   title: string | null;
@@ -621,9 +783,26 @@ export type POST_QUERYResult = {
     title: string | null;
     slug: Slug | null;
   }> | null;
+  seo: {
+    title: string | "";
+    description: string | "";
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    noIndex: boolean | false;
+  };
 } | null;
 // Variable: PAGE_QUERY
-// Query: *[_type == "page" && slug.current == $slug][0]{  ...,  content[]{    ...,    _type == "faqs" => {      ...,      faqs[]->    }  }}
+// Query: *[_type == "page" && slug.current == $slug][0]{  ...,  content[]{    ...,    _type == "faqs" => {      ...,      faqs[]->{            _id,            title,            body,            "text": pt::text(body)        }    }  },  "seo": {    "title": coalesce(seo.title, title, ""),    "description": coalesce(seo.description,  ""),    "image": seo.image,    "noIndex": seo.noIndex == true  },}
 export type PAGE_QUERYResult = {
   _id: string;
   _type: "page";
@@ -638,12 +817,8 @@ export type PAGE_QUERYResult = {
     title?: string;
     faqs: Array<{
       _id: string;
-      _type: "faq";
-      _createdAt: string;
-      _updatedAt: string;
-      _rev: string;
-      title?: string;
-      body?: Array<{
+      title: string | null;
+      body: Array<{
         children?: Array<{
           marks?: Array<string>;
           text?: string;
@@ -673,7 +848,8 @@ export type PAGE_QUERYResult = {
         alt?: string;
         _type: "image";
         _key: string;
-      }>;
+      }> | null;
+      text: string;
     }> | null;
   } | {
     _key: string;
@@ -762,9 +938,27 @@ export type PAGE_QUERYResult = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  seo: {
+    title: string | "";
+    description: string | "";
+    image: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      media?: unknown;
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    } | null;
+    noIndex: boolean | false;
+  };
+  social?: Social;
 } | null;
 // Variable: HOME_PAGE_QUERY
-// Query: *[_id == "siteSettings"][0]{    homePage->{      ...,      content[]{        ...,        _type == "faqs" => {          ...,          faqs[]->        }      }          }  }
+// Query: *[_id == "siteSettings"][0]{    homePage->{      ...,      content[]{        ...,        _type == "faqs" => {          ...,          faqs[]->{                _id,                title,                body,                "text": pt::text(body)            }        }      }          }  }
 export type HOME_PAGE_QUERYResult = {
   homePage: null;
 } | {
@@ -782,12 +976,8 @@ export type HOME_PAGE_QUERYResult = {
       title?: string;
       faqs: Array<{
         _id: string;
-        _type: "faq";
-        _createdAt: string;
-        _updatedAt: string;
-        _rev: string;
-        title?: string;
-        body?: Array<{
+        title: string | null;
+        body: Array<{
           children?: Array<{
             marks?: Array<string>;
             text?: string;
@@ -817,7 +1007,8 @@ export type HOME_PAGE_QUERYResult = {
           alt?: string;
           _type: "image";
           _key: string;
-        }>;
+        }> | null;
+        text: string;
       }> | null;
     } | {
       _key: string;
@@ -906,8 +1097,40 @@ export type HOME_PAGE_QUERYResult = {
       crop?: SanityImageCrop;
       _type: "image";
     };
+    seo?: Seo;
+    social?: Social;
   } | null;
 } | null;
+// Variable: REDIRECTS_QUERY
+// Query: *[_type == "redirect" && isEnabled == true] {        source,        destination,        permanent    }
+export type REDIRECTS_QUERYResult = Array<{
+  source: string | null;
+  destination: string | null;
+  permanent: boolean | null;
+}>;
+// Variable: OG_IMAGE_QUERY
+// Query: *[_id == $id][0]{    title,    "image": mainImage.asset->{      url,      metadata {        palette      }    }  }
+export type OG_IMAGE_QUERYResult = {
+  title: null;
+  image: null;
+} | {
+  title: string | null;
+  image: null;
+} | {
+  title: string | null;
+  image: {
+    url: string | null;
+    metadata: {
+      palette: SanityImagePalette | null;
+    } | null;
+  } | null;
+} | null;
+// Variable: SITEMAP_QUERY
+// Query: *[_type in ["page", "post"] && defined(slug.current)] {        "href": select(          _type == "page" => "/" + slug.current,          _type == "post" => "/posts/" + slug.current,          slug.current        ),        _updatedAt    }
+export type SITEMAP_QUERYResult = Array<{
+  href: string | null;
+  _updatedAt: string;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -915,8 +1138,11 @@ declare module "@sanity/client" {
   interface SanityQueries {
     "*[_type == \"post\" && defined(slug.current)]|order(publishedAt desc)[0...12]{\n  _id,\n  title,\n  slug,\n  body,\n  mainImage,\n  publishedAt,\n  \"categories\": coalesce(\n    categories[]->{\n      _id,\n      slug,\n      title\n    },\n    []\n  ),\n  author->{\n    name,\n    image\n  }\n}": POSTS_QUERYResult;
     "*[_type == \"post\" && defined(slug.current)]{ \n  \"slug\": slug.current\n}": POSTS_SLUGS_QUERYResult;
-    "*[_type == \"post\" && slug.current == $slug][0]{\n  _id,\n  title,\n  body,\n  mainImage,\n  publishedAt,\n  \"categories\": coalesce(\n    categories[]->{\n      _id,\n      slug,\n      title\n    },\n    []\n  ),\n  author->{\n    name,\n    image\n  },\n  relatedPosts[]{\n    _key, // required for drag and drop\n    ...@->{_id, title, slug} // get fields from the referenced post\n  }\n}": POST_QUERYResult;
-    "*[_type == \"page\" && slug.current == $slug][0]{\n  ...,\n  content[]{\n    ...,\n    _type == \"faqs\" => {\n      ...,\n      faqs[]->\n    }\n  }\n}": PAGE_QUERYResult;
-    "*[_id == \"siteSettings\"][0]{\n    homePage->{\n      ...,\n      content[]{\n        ...,\n        _type == \"faqs\" => {\n          ...,\n          faqs[]->\n        }\n      }      \n    }\n  }": HOME_PAGE_QUERYResult;
+    "*[_type == \"post\" && slug.current == $slug][0]{\n  _id,\n  title,\n  body,\n  mainImage,\n  publishedAt,\n  \"categories\": coalesce(\n    categories[]->{\n      _id,\n      slug,\n      title\n    },\n    []\n  ),\n  author->{\n    name,\n    image\n  },\n  relatedPosts[]{\n    _key, // required for drag and drop\n    ...@->{_id, title, slug} // get fields from the referenced post\n  },\n  \"seo\": {\n    \"title\": coalesce(seo.title, title, \"\"),\n    \"description\": coalesce(seo.description,  \"\"),\n    \"image\": seo.image,\n    \"noIndex\": seo.noIndex == true\n  },\n}": POST_QUERYResult;
+    "*[_type == \"page\" && slug.current == $slug][0]{\n  ...,\n  content[]{\n    ...,\n    _type == \"faqs\" => {\n      ...,\n      faqs[]->{\n            _id,\n            title,\n            body,\n            \"text\": pt::text(body)\n        }\n    }\n  },\n  \"seo\": {\n    \"title\": coalesce(seo.title, title, \"\"),\n    \"description\": coalesce(seo.description,  \"\"),\n    \"image\": seo.image,\n    \"noIndex\": seo.noIndex == true\n  },\n}": PAGE_QUERYResult;
+    "*[_id == \"siteSettings\"][0]{\n    homePage->{\n      ...,\n      content[]{\n        ...,\n        _type == \"faqs\" => {\n          ...,\n          faqs[]->{\n                _id,\n                title,\n                body,\n                \"text\": pt::text(body)\n            }\n        }\n      }      \n    }\n  }": HOME_PAGE_QUERYResult;
+    "\n    *[_type == \"redirect\" && isEnabled == true] {\n        source,\n        destination,\n        permanent\n    }\n  ": REDIRECTS_QUERYResult;
+    "\n  *[_id == $id][0]{\n    title,\n    \"image\": mainImage.asset->{\n      url,\n      metadata {\n        palette\n      }\n    }\n  }    \n": OG_IMAGE_QUERYResult;
+    "\n    *[_type in [\"page\", \"post\"] && defined(slug.current)] {\n        \"href\": select(\n          _type == \"page\" => \"/\" + slug.current,\n          _type == \"post\" => \"/posts/\" + slug.current,\n          slug.current\n        ),\n        _updatedAt\n    }\n    ": SITEMAP_QUERYResult;
   }
 }

@@ -15,6 +15,7 @@ import { structure } from './src/sanity/structure';
 
 import { presentationTool } from 'sanity/presentation';
 import { resolve } from '@/sanity/presentation/resolve';
+import { assist } from '@sanity/assist';
 
 export default defineConfig({
     basePath: '/studio',
@@ -35,6 +36,7 @@ export default defineConfig({
                 },
             },
         }),
+        assist(),
     ],
     document: {
         newDocumentOptions: (prev) => prev.filter((item) => item.templateId !== 'siteSettings'), // Allows only one siteSettings document
