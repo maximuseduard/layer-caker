@@ -2,6 +2,10 @@
 
 This is a [Sanity.io](https://sanity.io) and [Next.js](https://nextjs.org) project created following a Course on [Sanity Learn](https://sanity.io/learn).
 
+## Demo
+
+[Vercel demo](https://layer-caker-drab.vercel.app/)
+
 ## Getting Started
 
 First, run the development server:
